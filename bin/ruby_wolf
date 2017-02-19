@@ -1,0 +1,10 @@
+#!/usr/bin/env ruby
+#
+# Copyright (c) 2017 Nguyễn Quang Minh
+#
+
+require 'ruby_wolf'
+
+cli = RubyWolf::CLI.new ARGV
+
+cli.run
