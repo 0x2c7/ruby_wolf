@@ -1,6 +1,6 @@
 # RubyWolf
 
-Ruby wolf is a tiny ruby web server that uses pre-forked and event driven with kqueue / epoll approach. Honestly, this web server is written for study and research purpose. I'm sure it could be used anywhere. So, don't use it in real world :)
+Ruby wolf is a tiny ruby web server for rack-based application. This server follows pre-forked and event driven with kqueue / epoll approach. Honestly, this web server is written for study and research purpose. I'm sure it could be used anywhere. So, don't use it in real world :)
 
 ## Installation
 

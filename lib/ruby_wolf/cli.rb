@@ -2,16 +2,21 @@ require 'optparse'
 
 module RubyWolf
   class CLI
-    attr_reader :configs
+    attr_reader :app, :server, :configs
 
     def initialize(args)
       @args = args
       @configs = RubyWolf::Configuration.new
+      @app_root = `pwd`.to_s.strip
     end
 
     def run
       parse_options
-      puts 'Start of something new'
+      raise 'Rack file not found' unless File.exist?(rack_file)
+
+      @app, _rack_options = ::Rack::Builder.parse_file(rack_file)
+      @server = RubyWolf::Server.new(app, configs)
+      @server.start
     end
 
     def parse_options
@@ -33,6 +38,12 @@ module RubyWolf
       end
 
       opt_parser.parse!(@args)
+    end
+
+    private
+
+    def rack_file
+      "#{@app_root}/config.ru"
     end
   end
 end
