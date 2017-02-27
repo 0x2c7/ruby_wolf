@@ -45,6 +45,11 @@ describe RubyWolf::CLI do
 
   describe '#parse_options' do
     describe 'daemon option' do
+      context 'default daemon' do
+        let(:args) { [] }
+        it { expect(cli.configs[:daemon]).to eql(false) }
+      end
+
       context 'short form' do
         let(:args) { ['-d'] }
         it { expect(cli.configs[:daemon]).to eql(true) }
@@ -56,7 +61,29 @@ describe RubyWolf::CLI do
       end
     end
 
+    describe 'host option' do
+      context 'default host' do
+        let(:args) { [] }
+        it { expect(cli.configs[:host]).to eql('0.0.0.0') }
+      end
+
+      context 'short form' do
+        let(:args) { ['-h localhost'] }
+        it { expect(cli.configs[:host]).to eql('localhost') }
+      end
+
+      context 'full form' do
+        let(:args) { ['--host=localhost'] }
+        it { expect(cli.configs[:host]).to eql('localhost') }
+      end
+    end
+
     describe 'port option' do
+      context 'default port' do
+        let(:args) { [] }
+        it { expect(cli.configs[:port]).to eql(3000) }
+      end
+
       context 'short form' do
         let(:args) { ['-p 5000'] }
         it { expect(cli.configs[:port]).to eql(5000) }
@@ -65,6 +92,23 @@ describe RubyWolf::CLI do
       context 'full form' do
         let(:args) { ['--port=5000'] }
         it { expect(cli.configs[:port]).to eql(5000) }
+      end
+    end
+
+    describe 'worker option' do
+      context 'default worker' do
+        let(:args) { [] }
+        it { expect(cli.configs[:worker]).to eql(4) }
+      end
+
+      context 'short form' do
+        let(:args) { ['-w 20'] }
+        it { expect(cli.configs[:worker]).to eql(20) }
+      end
+
+      context 'full form' do
+        let(:args) { ['--worker=20'] }
+        it { expect(cli.configs[:port]).to eql(20) }
       end
     end
   end

@@ -27,8 +27,16 @@ module RubyWolf
           @configs[:daemon] = true
         end
 
+        opts.on('-h HOST', '--port=HOST', 'Binding host') do |arg|
+          @configs[:host] = arg
+        end
+
         opts.on('-p PORT', '--port=PORT', 'Port of the program') do |arg|
           @configs[:port] = arg.to_i
+        end
+
+        opts.on('-w WORKER', '--worker=WORKER', 'Number of worker processes') do |arg|
+          @configs[:worker] = arg.to_i
         end
 
         opts.on('-h', '--help', 'Show the usages') do
