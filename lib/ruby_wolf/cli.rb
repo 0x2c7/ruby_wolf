@@ -14,8 +14,7 @@ module RubyWolf
       parse_options
       raise 'Rack file not found' unless File.exist?(rack_file)
 
-      @app, _rack_options = ::Rack::Builder.parse_file(rack_file)
-      @server = RubyWolf::Server.new(app, configs)
+      @server = RubyWolf::Server.new(rack_file, configs)
       @server.start
     end
 
