@@ -1,8 +1,5 @@
 module RubyWolf
   class Connection
-    CRLF = "\r\n".freeze
-    READ_SIZE = 16 * 1024
-
     attr_reader :socket, :read_data, :write_data
 
     def initialize(socket)
@@ -18,8 +15,10 @@ module RubyWolf
     end
 
     def read
-      @read_data << socket.read_nonblock(READ_SIZE)
-      @reading = false if @read_data.end_with?(CRLF)
+      @read_data << socket.read_nonblock(RubyWolf::READ_SIZE)
+      @reading = false if @read_data.end_with?(RubyWolf::CRLF)
+    rescue EOFError
+      @reading = false
     end
 
     def enqueue_write(data)

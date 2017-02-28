@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'byebug'
 
   spec.add_runtime_dependency 'rack', '>2.0.0'
+  spec.add_runtime_dependency 'http_parser.rb'
 end
