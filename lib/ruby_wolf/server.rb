@@ -53,19 +53,26 @@ module RubyWolf
     end
 
     def trap_signal
-      [:INT, :TERM].each do |signal|
-        Signal.trap(signal) do
-          if RubyWolf::MAIN_PID == Process.pid
-            puts "Stopping server\n"
-            workers.each do |w|
-              Process.kill(:TERM, w.pid)
-            end
-          else
-            puts "Stopping worker #{Process.pid} \n"
-          end
-          Process.waitall
-          exit
+      Signal.trap(:INT) do
+        if RubyWolf::MAIN_PID == Process.pid
+          puts "Stopping server\n"
+        else
+          puts "Stopping worker #{Process.pid} \n"
         end
+        exit
+      end
+
+      Signal.trap(:TERM) do
+        if RubyWolf::MAIN_PID == Process.pid
+          puts "Stopping server\n"
+          workers.each do |w|
+            Process.kill(:TERM, w.pid)
+          end
+        else
+          puts "Stopping worker #{Process.pid} \n"
+        end
+        sleep 1
+        exit
       end
     end
   end
