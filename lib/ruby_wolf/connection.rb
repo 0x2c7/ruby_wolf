@@ -27,11 +27,11 @@ module RubyWolf
 
     def write
       writen = socket.write_nonblock(@write_data)
-      @write_data[0..writen] = ''
+      @write_data = @write_data.byteslice(writen, @write_data.bytesize)
     end
 
     def need_to_write?
-      !@write_data.length.zero?
+      !@write_data.bytesize.zero?
     end
 
     def to_io
