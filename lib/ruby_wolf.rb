@@ -12,6 +12,7 @@ require 'ruby_wolf/cli'
 module RubyWolf
   MAIN_PID = Process.pid
   CRLF = "\r\n".freeze
+  HEADER_ENDING = "\r\n\r\n".freeze
   READ_SIZE = 16 * 1024
 
   def self.logger

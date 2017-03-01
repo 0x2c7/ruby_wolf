@@ -15,7 +15,6 @@ module RubyWolf
 
     def process
       prepare_rack_env
-      parse_request
       generate_response
       callback.call(response) if callback
       response
@@ -24,35 +23,34 @@ module RubyWolf
     private
 
     def prepare_rack_env
-      @env = ENV.to_h
-      @env.delete 'HTTP_CONTENT_LENGTH'
-      url_scheme = %w(yes on 1).include?(ENV[::Rack::HTTPS]) ? 'https' : 'http'
-      @env.update(
-        ::Rack::RACK_VERSION      => ::Rack::VERSION,
-        ::Rack::RACK_INPUT        => STDIN,
-        ::Rack::RACK_ERRORS       => STDERR,
-        ::Rack::RACK_MULTITHREAD  => false,
-        ::Rack::RACK_MULTIPROCESS => true,
-        ::Rack::RACK_RUNONCE      => true,
-        ::Rack::RACK_URL_SCHEME   => url_scheme,
-        ::Rack::SERVER_PROTOCOL   => 'HTTP/1.1'
-      )
-    end
+      @env = {
+        'rack.version' => ::Rack::VERSION,
+        'rack.errors' => STDERR,
+        'rack.multithread'  => false,
+        'rack.multiprocess' => true,
+        'rack.runonce'      => true,
+        'rack.url_scheme'   => ENV['HTTPS'] ? 'https' : 'http',
 
-    def parse_request
-      parser = Http::Parser.new
-      parser.on_headers_complete = proc do
-        env[::Rack::HTTP_VERSION] = parser.http_version
-        env[::Rack::REQUEST_METHOD] = parser.http_method
+        'REQUEST_METHOD' => connection.method,
+        'REQUEST_PATH' => connection.path,
+        'PATH_INFO' => connection.path,
+        'QUERY_STRING' => connection.query,
 
-        uri = URI.parse(parser.request_url)
-        env[::Rack::REQUEST_PATH] = uri.path
-        env[::Rack::QUERY_STRING] = uri.query
-      end
-      parser << connection.read_data
+        'SERVER_PROTOCOL' => 'HTTP/1.1',
+        'SERVER_NAME' => 'Ruby Wolf',
+        'HTTP_VERSION' => 'HTTP/1.1',
+        'HTTP_HOST' => connection.headers['Host'],
+        'HTTP_USER_AGENT' => connection.headers['User-Agent'],
+        'HTTP_ACCEPT' => connection.headers['Accept'],
+        'CONTENT_LENGTH' => connection.headers['Content-Length'],
+        'CONTENT_TYPE' => connection.headers['Content-Type'],
+
+        'rack.input' => StringIO.new(connection.read_chunk)
+      }
+
       RubyWolf.log(
         [
-          "HTTP/#{env[::Rack::HTTP_VERSION].join('.')}",
+          "HTTP/#{env[::Rack::HTTP_VERSION]}",
           env[::Rack::REQUEST_METHOD],
           "#{env[::Rack::REQUEST_PATH]}?#{env[::Rack::QUERY_STRING]}"
         ].join(' ')
