@@ -9,22 +9,20 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Nguyễn Quang Minh']
   spec.email         = ['nguyenquangminh0711@gmail.com']
 
-  spec.summary       = 'A simple ruby web server using pre-fork and epoll / kqueue'
-  spec.description   = 'A simple ruby web server using pre-fork and epoll / kqueue'
+  spec.summary       = 'A simple ruby web server using pre-fork and event loop'
+  spec.description   = 'My simple implementation of Rack web server using pre-fork and event loop'
   spec.homepage      = 'https://github.com/nguyenquangminh0711/ruby_wolf'
 
   spec.license       = 'MIT'
 
-  spec.files         = Dir["#{File.expand_path('../lib', __FILE__)}/**/*.rb"]
+  spec.files         = `git ls-files`.split($/)
   spec.bindir        = 'bin'
   spec.executables   = ['ruby_wolf']
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'bundler'
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec'
-  spec.add_development_dependency 'byebug'
+  spec.add_development_dependency 'rspec', '~>3.5.0', '>=3.5.0'
+  spec.add_development_dependency 'byebug', '~>9.0.0', '>=8.0.0'
 
-  spec.add_runtime_dependency 'rack', '>2.0.0'
-  spec.add_runtime_dependency 'http_parser.rb'
+  spec.add_runtime_dependency 'rack', '~>2.0.0', '>=2.0.0'
+  spec.add_runtime_dependency 'http_parser.rb', '~>0.6.0', '>=0.6.0'
 end
