@@ -20,9 +20,8 @@ Gem::Specification.new do |spec|
   spec.executables   = ['ruby_wolf']
   spec.require_paths = ['lib']
 
-  spec.add_development_dependency 'rspec', '>=3.5.0'
-  spec.add_development_dependency 'byebug', '>=9.0.0'
+  spec.add_development_dependency 'rspec', '~>3.5', '>=3.5.0'
+  spec.add_development_dependency 'byebug', '~>9.0', '>=9.0.0'
 
-  spec.add_runtime_dependency 'rack', '>=1.4.0'
-  spec.add_runtime_dependency 'http_parser.rb', '>=0.6.0'
+  spec.add_runtime_dependency 'http_parser.rb', '~>0.6', '>=0.6.0'
 end
