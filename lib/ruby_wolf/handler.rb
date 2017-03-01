@@ -23,7 +23,7 @@ module RubyWolf
     private
 
     def prepare_rack_env
-      @env = {
+      @env = ENV.to_h.merge(
         'rack.version' => ::Rack::VERSION,
         'rack.errors' => STDERR,
         'rack.multithread'  => false,
@@ -46,13 +46,13 @@ module RubyWolf
         'CONTENT_TYPE' => connection.headers['Content-Type'],
 
         'rack.input' => StringIO.new(connection.read_chunk)
-      }
+      )
 
       RubyWolf.log(
         [
-          "HTTP/#{env[::Rack::HTTP_VERSION]}",
-          env[::Rack::REQUEST_METHOD],
-          "#{env[::Rack::REQUEST_PATH]}?#{env[::Rack::QUERY_STRING]}"
+          'HTTP/1.1',
+          connection.method,
+          "#{connection.path}?#{connection.query}"
         ].join(' ')
       )
     end
@@ -60,13 +60,13 @@ module RubyWolf
     def generate_response
       status, headers, body = app.call(env)
       RubyWolf.log(
-        "Response #{env[::Rack::SERVER_PROTOCOL]} #{status}"
+        "Response HTTP/1.1 #{status}"
       )
       compose_response(status, headers, body)
     end
 
     def compose_response(status, headers, body)
-      @response += "#{env[::Rack::SERVER_PROTOCOL]} #{status} #{RubyWolf::CRLF}"
+      @response += "HTTP/1.1 #{status} #{RubyWolf::CRLF}"
       headers.each do |key, value|
         @response += "#{key}: #{value}#{RubyWolf::CRLF}"
       end
