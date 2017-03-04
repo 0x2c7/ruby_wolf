@@ -111,5 +111,22 @@ describe RubyWolf::CLI do
         it { expect(cli.configs[:port]).to eql(20) }
       end
     end
+
+    describe 'environment option' do
+      context 'default environment' do
+        let(:args) { [] }
+        it { expect(cli.configs[:environment]).to eql('development') }
+      end
+
+      context 'short form' do
+        let(:args) { ['-w production'] }
+        it { expect(cli.configs[:environment]).to eql('production') }
+      end
+
+      context 'full form' do
+        let(:args) { ['--environment=20'] }
+        it { expect(cli.configs[:environment]).to eql('production') }
+      end
+    end
   end
 end

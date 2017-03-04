@@ -12,6 +12,8 @@ module RubyWolf
 
     def run
       parse_options
+      set_environment
+
       raise 'Rack file not found' unless File.exist?(rack_file)
 
       @server = RubyWolf::Server.new(rack_file, configs)
@@ -38,6 +40,10 @@ module RubyWolf
           @configs[:worker] = arg.to_i
         end
 
+        opts.on('-e ENVIRONMENT', '--environment=ENVIRONMENT', 'Current environment') do |arg|
+          @configs[:environment] = arg
+        end
+
         opts.on('-h', '--help', 'Show the usages') do
           puts opts
           exit
@@ -51,6 +57,11 @@ module RubyWolf
 
     def rack_file
       "#{@app_root}/config.ru"
+    end
+
+    def set_environment
+      ENV['RAILS_ENV'] = configs[:environment]
+      ENV['RACK_ENV'] = configs[:environment]
     end
   end
 end

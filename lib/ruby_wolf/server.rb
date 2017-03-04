@@ -28,6 +28,8 @@ module RubyWolf
       RubyWolf.log('~~~ Ruby Wolf ~~~')
       RubyWolf.log('Loading Rack application')
       @app, _rack_options = ::Rack::Builder.parse_file(@rack_file)
+      Rails.logger = RubyWolf.logger if defined?(Rails)
+      ActiveRecord::Base.logger = RubyWolf.logger if defined?(ActiveRecord)
     end
 
     def setup_socket

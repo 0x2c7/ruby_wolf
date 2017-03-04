@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
-# Specify your gem's dependencies in ruby_wolf.gemspec
+gem 'rack', '< 3.0'
 gemspec
