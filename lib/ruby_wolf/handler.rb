@@ -3,7 +3,7 @@ require 'http/parser'
 module RubyWolf
   class Handler
 
-    attr_reader :app, :env, :connection, :response, :callback
+    attr_reader :app, :env, :connection, :response, :callback, :body, :headers, :status
 
     def initialize(app, connection, &callback)
       @app = app
@@ -47,25 +47,16 @@ module RubyWolf
 
         'rack.input' => StringIO.new(connection.read_chunk)
       )
-
-      RubyWolf.logger.info(
-        [
-          'HTTP/1.1',
-          connection.method,
-          "#{connection.path}?#{connection.query}"
-        ].join(' ')
-      )
+      log_request
     end
 
     def generate_response
-      status, headers, body = app.call(env)
-      RubyWolf.logger.info(
-        "Response HTTP/1.1 #{status}"
-      )
-      compose_response(status, headers, body)
+      @status, @headers, @body = app.call(env)
+      compose_response
+      log_response
     end
 
-    def compose_response(status, headers, body)
+    def compose_response
       @response += "HTTP/1.1 #{status} #{RubyWolf::CRLF}"
       headers.each do |key, value|
         @response += "#{key}: #{value}#{RubyWolf::CRLF}"
@@ -77,6 +68,32 @@ module RubyWolf
       end
     ensure
       body.close if body.respond_to? :close
+    end
+
+    private
+
+    def log_request
+      RubyWolf.logger.info(
+        [
+          'HTTP/1.1',
+          connection.method,
+          request_path
+        ].join(' ')
+      )
+    end
+
+    def log_response
+      RubyWolf.logger.info(
+        "Response HTTP/1.1 #{status}"
+      )
+    end
+
+    def request_path
+      if connection.query
+        "#{connection.path}?#{connection.query}"
+      else
+        connection.path
+      end
     end
   end
 end
