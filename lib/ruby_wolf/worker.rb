@@ -11,7 +11,7 @@ module RubyWolf
 
     def start
       @pid = fork do
-        RubyWolf.log('Worker is ready')
+        RubyWolf.logger.info('Worker is ready')
         handle_loop
       end
     end

@@ -48,7 +48,7 @@ module RubyWolf
         'rack.input' => StringIO.new(connection.read_chunk)
       )
 
-      RubyWolf.log(
+      RubyWolf.logger.info(
         [
           'HTTP/1.1',
           connection.method,
@@ -59,7 +59,7 @@ module RubyWolf
 
     def generate_response
       status, headers, body = app.call(env)
-      RubyWolf.log(
+      RubyWolf.logger.info(
         "Response HTTP/1.1 #{status}"
       )
       compose_response(status, headers, body)

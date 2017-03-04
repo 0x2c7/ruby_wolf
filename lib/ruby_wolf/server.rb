@@ -1,5 +1,3 @@
-require 'logger'
-
 module RubyWolf
   class Server
     attr_reader :app, :configs, :socket, :workers
@@ -25,8 +23,8 @@ module RubyWolf
     private
 
     def setup_rack
-      RubyWolf.log('~~~ Ruby Wolf ~~~')
-      RubyWolf.log('Loading Rack application')
+      RubyWolf.logger.info('~~~ Ruby Wolf ~~~')
+      RubyWolf.logger.info('Loading Rack application')
       @app, _rack_options = ::Rack::Builder.parse_file(@rack_file)
       Rails.logger = RubyWolf.logger if defined?(Rails)
       ActiveRecord::Base.logger = RubyWolf.logger if defined?(ActiveRecord)
@@ -34,9 +32,9 @@ module RubyWolf
 
     def setup_socket
       @socket = TCPServer.new(configs[:host], configs[:port])
-      RubyWolf.log("Server is running on #{configs[:host]}:#{configs[:port]}")
-      RubyWolf.log("Process pid is #{Process.pid}")
-      RubyWolf.log("Number of worker: #{configs[:worker]}")
+      RubyWolf.logger.info("Server is running on #{configs[:host]}:#{configs[:port]}")
+      RubyWolf.logger.info("Process pid is #{Process.pid}")
+      RubyWolf.logger.info("Number of worker: #{configs[:worker]}")
     end
 
     def handle_loop
@@ -44,7 +42,7 @@ module RubyWolf
         stopped_worker = workers.find { |w| w.pid == stopped_pid }
         next unless stopped_worker
 
-        RubyWolf.log("Worker with pid #{stopped_pid} suddenly stopped", :error)
+        RubyWolf.logger.info("Worker with pid #{stopped_pid} suddenly stopped", :error)
 
         sleep(1)
         worker = RubyWolf::Worker.new(self)
