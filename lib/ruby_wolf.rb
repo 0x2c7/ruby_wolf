@@ -1,4 +1,3 @@
-require 'byebug'
 require 'rack'
 
 require 'ruby_wolf/version'
