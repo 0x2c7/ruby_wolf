@@ -16,9 +16,7 @@ module RubyWolf
     def process
       prepare_rack_env
       log_request
-
-      @status, @headers, @body = @app.call(env)
-
+      process_request
       compose_response
       log_response
 
@@ -52,6 +50,19 @@ module RubyWolf
 
         'rack.input' => StringIO.new(@connection.read_chunk)
       )
+    end
+
+    def process_request
+      @status, @headers, @body = @app.call(env)
+    rescue => e
+      message = "Error while processing the request: #{e.message}\n#{e.backtrace.join("\n")}"
+      @status = 500
+      @body = [message]
+      @headers = [
+        ['Content-Length', message.bytesize],
+        ['Content-Type', 'text/plain; charset=utf-8']
+      ]
+      RubyWolf.logger.error(message)
     end
 
     def compose_response
